@@ -314,13 +314,13 @@ elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
 <?php
     # Displaying first 8 servers
     $displayed = 0;
-    foreach($cluster as $server_name => $server)
+    foreach($cluster as $name => $server)
     { ?>
             <div class="line server" style="<?php if($displayed > 8) { echo 'display:none;'; } else { $displayed++; } ?>">
-                <span class="left setting"><?php echo $server_name; ?></span>
-                <span class="right" style="font-weight:bold;"><a href="index.php?server=<?php echo $server_name; ?>" class="green">See Server Stats</a></span>
+                <span class="left setting"><?php echo (strlen($name) > 27) ? substr($name, 0, 27) . ' [...]' : $name; ?></span>
+                <span class="right" style="font-weight:bold;"><a href="index.php?server=<?php echo $name; ?>" class="green">See Server Stats</a></span>
                 <div class="line" style="margin-left:5px;">
-                    <?php echo ($status[$server_name] != '') ? 'Version ' . $status[$server_name] . ', Uptime : ' . Library_Data_Analysis::uptime($uptime[$server_name]) : 'Server did not respond'; ?>
+                    <?php echo ($status[$name] != '') ? 'Version ' . $status[$name] . ', Uptime : ' . Library_Data_Analysis::uptime($uptime[$name]) : 'Server did not respond'; ?>
                 </div>
             </div>
 <?php
@@ -377,9 +377,7 @@ elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
 
         <div class="sub-header corner padding">Cache Size <span class="green">Graphic</span></div>
         <div class="container corner padding">
-            <div class="line">
-                <img src="http://chart.apis.google.com/chart?chf=bg,s,ebebeb&amp;chs=281x225&amp;cht=p&amp;chco=b5463f|2a707b|ffffff&amp;chd=t:<?php echo $wasted_percent; ?>,<?php echo $used_percent; ?>,<?php echo $free_percent; ?>&amp;chdl=Wasted%20<?php echo $wasted_percent; ?>%|Used%20<?php echo $used_percent; ?>%|Free%20<?php echo $free_percent; ?>%&amp;chdlp=b" alt="Cache Size by GoogleCharts" width="281" height="225"/>
-            </div>
+            <div id="cache-size" class="line" data-wasted="<?php echo $wasted_percent; ?>" data-used="<?php echo $used_percent; ?>" data-free="<?php echo $free_percent; ?>"></div>
         </div>
 <?php
 # Viewing a single server
@@ -414,11 +412,21 @@ elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
          </div>
 <?php
 } ?>
-        <div class="sub-header corner padding">Hit &amp; Miss Rate <span class="green">Graphic</span></div>
+        <div class="sub-header corner padding">Slab <span class="green">Reassign & Automove</span></div>
         <div class="container corner padding">
             <div class="line">
-            <img src="http://chart.apis.google.com/chart?cht=bvg&amp;chd=t:<?php echo $stats['get_hits_percent']; ?>,<?php echo $stats['get_misses_percent']; ?>&amp;chs=280x235&amp;chl=Hit|Miss&amp;chf=bg,s,ebebeb&amp;chco=2a707b|b5463f&amp;chxt=y&amp;chbh=a&amp;chm=N,000000,0,-1,11" alt="Cache Hit &amp; Miss Rate by GoogleChart" width="280" height="235"/>
+                <span class="left help" title="Internal name : slabs_moved&#013;Indicates how many pages have been successfully moved">Slabs Moved</span>
+                <?php echo (isset($stats['slabs_moved'])) ? Library_Data_Analysis::hitResize($stats['slabs_moved']) : 'N/A on ' . $stats['version']; ?>
             </div>
+            <div class="line">
+                <span  class="left help" title="Internal name : slab_reassign_running&#013;Indicates if the slab thread is attempting to move a page.&#013;It may need to wait for some memory to free up, so it could take several seconds.">Reassigning</span>
+                <?php if(isset($stats['slab_reassign_running'])) { if($stats['slab_reassign_running']) { echo 'Yes'; } else { echo 'No'; } } else { echo 'N/A on ' . $stats['version']; } ?>
+            </div>
+         </div>
+         
+        <div class="sub-header corner padding">Hit &amp; Miss Rate <span class="green">Graphic</span></div>
+        <div class="container corner padding">
+            <div id="hit-miss-rate" class="line" data-hit="<?php echo $stats['get_hits_percent']; ?>" data-miss="<?php echo $stats['get_misses_percent']; ?>"></div>
         </div>
 
         <div class="sub-header corner padding">Network <span class="green">Stats</span></div>
@@ -433,3 +441,5 @@ elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
             </div>
         </div>
     </div>
+	<script type="text/javascript" src="Public/Scripts/CacheSizePieChart.js"></script>
+	<script type="text/javascript" src="Public/Scripts/HitMissRateBarChart.js"></script>

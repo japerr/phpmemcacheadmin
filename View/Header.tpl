@@ -5,6 +5,7 @@
     <title>phpMemcachedAdmin <?php echo CURRENT_VERSION; ?></title>
     <link rel="stylesheet" type="text/css" href="Public/Styles/Style.css"/>
     <script type="text/javascript" src="Public/Scripts/Script.js"></script>
+	<script type="text/javascript" src="Public/Scripts/d3.min.js"></script>
 </head>
 <body>
 <div style="margin:0pt auto; width:1000px; clear:both;">

@@ -77,11 +77,11 @@ hr {
              "Courier New",
              Courier,
              monospace;
+     cursor: hand;
 }
 
 .loading {
 	text-decoration: blink;
-	width: 680px;
 	visibility: hidden;
 }
 
@@ -155,9 +155,9 @@ hr {
 	border-width: 1px;
     border-style: solid;
     border-color: #9c3c36;
-	background: white;
+	background: #B5463F;
 	font-weight: bold;
-	color: black
+	color: #fff
 }
 
 .button {
@@ -233,4 +233,18 @@ hr {
 	background: #b5463f;
 	color: #fff;
 	font-weight: bold
+}
+/* d3 bar chart styling */
+.axis {
+	font-size: 9.5px;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #939393;
+	shape-rendering: crispEdges;
+}
+.label {
+	font-size: 11px;
 }
